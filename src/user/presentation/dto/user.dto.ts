@@ -10,4 +10,7 @@ export class UserDto {
 
   @Field()
   dueDate: string;
+
+  @Field()
+  pregnancyWeek: number;
 }

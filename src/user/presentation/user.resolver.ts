@@ -12,8 +12,8 @@ export class UserResolver {
     return await this.userService.getUserBySeq(seq);
   }
 
-  @Mutation(() => UserDto)
-  async updateUser(@Args('updateUser') userDto: UpdateUserInput) {
-    return await this.userService.updateUser(userDto.seq, userDto);
+  @Mutation(() => String)
+  async updateUser(@Args('updateUser') userInput: UpdateUserInput) {
+    return await this.userService.updateUser(userInput.seq, userInput);
   }
 }

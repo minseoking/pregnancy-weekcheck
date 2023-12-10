@@ -3,6 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from '../domain/user.entity';
 import { UserDto } from '../presentation/dto/user.dto';
+import { UpdateUserInput } from '../presentation/dto/update-user.input';
+import { calculatePregnancyWeek } from '../../global/util/date.util';
 
 @Injectable()
 export class UserService {
@@ -12,10 +14,10 @@ export class UserService {
   ) {}
 
   async getUserBySeq(seq: number) {
-    return await this.getUser(seq);
+    return this.toUserDto(await this.getUser(seq));
   }
 
-  async updateUser(seq: number, userDto: UserDto) {
+  async updateUser(seq: number, userDto: UpdateUserInput) {
     const user = await this.getUser(seq);
     if (userDto.nickname) {
       user.nickname = userDto.nickname;
@@ -23,7 +25,8 @@ export class UserService {
     if (userDto.dueDate) {
       user.dueDate = userDto.dueDate;
     }
-    return this.userRepository.save(user);
+    await this.userRepository.save(user);
+    return 'success';
   }
 
   private async getUser(seq: number) {
@@ -32,5 +35,15 @@ export class UserService {
       throw new NotFoundException('User not found');
     }
     return user;
+  }
+
+  private toUserDto(userEntity: UserEntity): UserDto {
+    const userDto = new UserDto();
+    userDto.seq = userEntity.seq;
+    userDto.nickname = userEntity.nickname;
+    userDto.dueDate = userEntity.dueDate;
+    userDto.pregnancyWeek = calculatePregnancyWeek(userEntity.dueDate);
+
+    return userDto;
   }
 }
