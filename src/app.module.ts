@@ -5,7 +5,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmConfig } from './global/config/typeorm.config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { graphqlConfig } from './global/config/graphql.config';
-import { PresentationModule } from './test/presentation/presentation.module';
 import { APP_PIPE } from '@nestjs/core';
 
 @Module({
@@ -14,7 +13,6 @@ import { APP_PIPE } from '@nestjs/core';
     GraphQLModule.forRootAsync(graphqlConfig),
     TypeOrmModule.forRootAsync(typeOrmConfig),
     UserModule,
-    PresentationModule,
   ],
   providers: [
     {
