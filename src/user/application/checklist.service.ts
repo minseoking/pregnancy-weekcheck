@@ -7,6 +7,7 @@ import { ChecklistDto } from '../presentation/dto/checklist.dto';
 import { CreateChecklistInput } from '../presentation/dto/create-checklist.input';
 import { UserEntity } from '../domain/user.entity';
 import { Repository } from 'typeorm';
+import { UpdateChecklistInput } from '../presentation/dto/update-checklist.input';
 
 @Injectable()
 export class ChecklistService {
@@ -27,14 +28,13 @@ export class ChecklistService {
       week,
       pagination,
     );
-    console.log(checklist);
     return checklist.map((checklist) => this.ToChecklistDto(checklist));
   }
 
   private ToChecklistDto(checklist: ChecklistEntity): ChecklistDto {
     return {
       isCompleted: checklist.isCompleted,
-      pregnancyWeek: checklist.weekNumber,
+      weekNumber: checklist.weekNumber,
       content: checklist.content,
       createdAt: checklist.createdAt,
     };
@@ -55,5 +55,32 @@ export class ChecklistService {
     );
     await this.checklistRepository.save(checklist);
     return 'success';
+  }
+
+  async updateChecklist(updateChecklist: UpdateChecklistInput) {
+    const checklist = await this.checklistRepository.findOneBy({
+      seq: updateChecklist.seq,
+    });
+    checklist.content = updateChecklist.content;
+
+    return await this.checklistRepository.save(checklist);
+  }
+
+  async deleteChecklist(seq: number) {
+    await this.checklistRepository.delete({ seq: seq });
+  }
+
+  async completeChecklist(seq: number) {
+    const checklist = await this.checklistRepository.findOneBy({
+      seq: seq,
+    });
+    checklist.complete();
+  }
+
+  async cancelCompleteChecklist(seq: number) {
+    const checklist = await this.checklistRepository.findOneBy({
+      seq: seq,
+    });
+    checklist.cancelComplete();
   }
 }

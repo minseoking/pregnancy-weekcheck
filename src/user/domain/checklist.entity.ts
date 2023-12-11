@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 import { UserEntity } from './user.entity';
 
-@Entity()
+@Entity('checklist')
 export class ChecklistEntity {
   @PrimaryGeneratedColumn()
   seq: number; // 고유번호
@@ -38,5 +38,12 @@ export class ChecklistEntity {
     checklist.isCompleted = false;
     checklist.isDeleted = false;
     return checklist;
+  }
+
+  complete() {
+    this.isCompleted = true;
+  }
+  cancelComplete() {
+    this.isCompleted = false;
   }
 }
