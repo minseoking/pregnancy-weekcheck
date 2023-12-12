@@ -39,7 +39,7 @@ export class ChecklistResolver {
     return await this.checklistService.updateChecklist(updateChecklist);
   }
 
-  @Mutation(() => ChecklistDto)
+  @Mutation(() => Boolean)
   async deleteChecklist(@Args('seq') seq: number) {
     return await this.checklistService.deleteChecklist(seq);
   }

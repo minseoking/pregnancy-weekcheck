@@ -33,6 +33,7 @@ export class ChecklistService {
 
   private ToChecklistDto(checklist: ChecklistEntity): ChecklistDto {
     return {
+      seq: checklist.seq,
       isCompleted: checklist.isCompleted,
       weekNumber: checklist.weekNumber,
       content: checklist.content,
@@ -67,7 +68,8 @@ export class ChecklistService {
   }
 
   async deleteChecklist(seq: number) {
-    await this.checklistRepository.delete({ seq: seq });
+    await this.checklistRepository.softDelete({ seq: seq });
+    return true;
   }
 
   async completeChecklist(seq: number) {

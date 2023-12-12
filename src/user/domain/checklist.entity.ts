@@ -1,6 +1,7 @@
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -24,11 +25,11 @@ export class ChecklistEntity {
   @Column()
   isCompleted: boolean; // 완료 여부
 
-  @Column()
-  isDeleted: boolean; // 삭제 여부
-
   @CreateDateColumn()
   createdAt: Date; // 생성일
+
+  @DeleteDateColumn()
+  deletedAt!: Date | null;
 
   static create(user: UserEntity, weekNumber: number, content: string) {
     const checklist = new ChecklistEntity();
@@ -36,7 +37,6 @@ export class ChecklistEntity {
     checklist.weekNumber = weekNumber;
     checklist.content = content;
     checklist.isCompleted = false;
-    checklist.isDeleted = false;
     return checklist;
   }
 
