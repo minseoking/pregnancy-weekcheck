@@ -1,6 +1,6 @@
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ChecklistService } from '../application/checklist.service';
-import { ChecklistDto } from './dto/checklist.dto';
+import { ChecklistDto } from './dto/checklistDto';
 import { PaginationDto } from '../../../global/dto/pagination.dto';
 import { CreateChecklistInput } from './dto/create-checklist.input';
 import { UpdateChecklistInput } from './dto/update-checklist.input';
@@ -16,7 +16,7 @@ export class ChecklistResolver {
     @Args('week', { type: () => Int }) week: number,
     @Args('pagination') pagination: PaginationDto,
   ): Promise<ChecklistDto[]> {
-    return await this.checklistService.getChecklistForWeek(
+    return await this.checklistService.getChecklistItemForWeek(
       userId,
       week,
       pagination,
@@ -38,22 +38,21 @@ export class ChecklistResolver {
   }
 
   @Mutation(() => Boolean)
-  async deleteChecklist(@Args('seq') seq: number) {
-    return await this.checklistService.deleteChecklist(seq);
-  }
-
-  @Mutation(() => Boolean)
-  async restoreDeleteChecklist(@Args('seq') seq: number) {
-    return await this.checklistService.restoreDeleteChecklist(seq);
-  }
-
-  @Mutation(() => ChecklistDto)
-  async completeChecklist(@Args('seq') seq: number) {
-    return await this.checklistService.completeChecklist(seq);
+  async updateDeleteChecklist(
+    @Args('seq') seq: number,
+    @Args('isDeleted') isDeleted: boolean,
+  ) {
+    return await this.checklistService.deleteChecklist(seq, isDeleted);
   }
 
   @Mutation(() => ChecklistDto)
-  async cancelCompleteChecklist(@Args('seq') seq: number) {
-    return await this.checklistService.cancelCompleteChecklist(seq);
+  async updateCompleteChecklist(
+    @Args('seq') seq: number,
+    @Args('isCompleted') isCompleted: boolean,
+  ) {
+    return await this.checklistService.updateCompleteChecklist(
+      seq,
+      isCompleted,
+    );
   }
 }

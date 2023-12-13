@@ -9,7 +9,7 @@ import {
 import { UserEntity } from '../../user/domain/user.entity';
 
 @Entity('checklist')
-export class ChecklistitemEntity {
+export class ChecklistEntity {
   @PrimaryGeneratedColumn()
   seq: number; // 고유번호
 
@@ -32,7 +32,7 @@ export class ChecklistitemEntity {
   deletedAt!: Date | null;
 
   static create(user: UserEntity, weekNumber: number, content: string) {
-    const checklist = new ChecklistitemEntity();
+    const checklist = new ChecklistEntity();
     checklist.user = user;
     checklist.weekNumber = weekNumber;
     checklist.content = content;
@@ -40,11 +40,11 @@ export class ChecklistitemEntity {
     return checklist;
   }
 
-  complete() {
-    this.isCompleted = true;
+  updateContent(content: string) {
+    this.content = content;
   }
 
-  cancelComplete() {
-    this.isCompleted = false;
+  updateComplete(isCompleted: boolean) {
+    this.isCompleted = isCompleted;
   }
 }

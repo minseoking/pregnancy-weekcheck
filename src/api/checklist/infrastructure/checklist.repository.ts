@@ -1,12 +1,12 @@
-import { ChecklistitemEntity } from '../domain/checklistitem.entity';
+import { ChecklistEntity } from '../domain/checklist.entity';
 import { DataSource, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { PaginationDto } from '../../../global/dto/pagination.dto';
 
 @Injectable()
-export class ChecklistRepository extends Repository<ChecklistitemEntity> {
+export class ChecklistRepository extends Repository<ChecklistEntity> {
   constructor(dataSource: DataSource) {
-    super(ChecklistitemEntity, dataSource.createEntityManager());
+    super(ChecklistEntity, dataSource.createEntityManager());
   }
 
   async findForWeek(userSeq: number, week: number, pagination: PaginationDto) {

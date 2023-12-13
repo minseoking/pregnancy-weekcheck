@@ -1,22 +1,25 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PaginationDto } from '../../../global/dto/pagination.dto';
-import { ChecklistitemEntity } from '../domain/checklistitem.entity';
-import { ChecklistDto } from '../presentation/dto/checklist.dto';
+import { ChecklistEntity } from '../domain/checklist.entity';
+import { ChecklistDto } from '../presentation/dto/checklistDto';
 import { CreateChecklistInput } from '../presentation/dto/create-checklist.input';
 import { UpdateChecklistInput } from '../presentation/dto/update-checklist.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ChecklistRepository } from '../infrastructure/checklist.repository';
 import { UserService } from '../../user/application/user.service';
+import { ChecklistSeedRepository } from '../infrastructure/checklist-seed.repository';
 
 @Injectable()
 export class ChecklistService {
   constructor(
     @InjectRepository(ChecklistRepository)
     private readonly checklistRepository: ChecklistRepository,
+    @InjectRepository(ChecklistSeedRepository)
+    private readonly checklistSeedRepository: ChecklistSeedRepository,
     private readonly userService: UserService,
   ) {}
 
-  async getChecklistForWeek(
+  async getChecklistItemForWeek(
     userSeq: number,
     week: number,
     pagination: PaginationDto,
@@ -26,10 +29,10 @@ export class ChecklistService {
       week,
       pagination,
     );
-    return checklist.map((checklist) => this.ToChecklistDto(checklist));
+    return checklist.map((checklist) => this.ToChecklistItemDto(checklist));
   }
 
-  private ToChecklistDto(checklist: ChecklistitemEntity): ChecklistDto {
+  private ToChecklistItemDto(checklist: ChecklistEntity): ChecklistDto {
     return {
       seq: checklist.seq,
       isCompleted: checklist.isCompleted,
@@ -39,10 +42,28 @@ export class ChecklistService {
     };
   }
 
+  /**
+   * 사용자가 추가되면 공통 체크리스트를 사용자 체크리스트에 넣어줌
+   * @param userSeq 사용자 seq
+   */
+  async initUserChecklist(userSeq: number) {
+    const user = await this.userService.getUserBySeq(userSeq);
+    const checklistSeeds = (await this.checklistSeedRepository.find()).map(
+      (checklist) => {
+        return ChecklistEntity.create(
+          user,
+          checklist.weekNumber,
+          checklist.content,
+        );
+      },
+    );
+    await this.checklistRepository.insert(checklistSeeds);
+  }
+
   async createChecklist(createChecklist: CreateChecklistInput) {
     const user = await this.userService.getUserBySeq(createChecklist.userSeq);
 
-    const checklist = ChecklistitemEntity.create(
+    const checklist = ChecklistEntity.create(
       user,
       createChecklist.weekNumber,
       createChecklist.content,
@@ -55,32 +76,29 @@ export class ChecklistService {
     const checklist = await this.checklistRepository.findOneBy({
       seq: updateChecklist.seq,
     });
-    checklist.content = updateChecklist.content;
+    if (!checklist) {
+      throw new NotFoundException('Checklist not found');
+    }
+    checklist.updateContent(updateChecklist.content);
 
     return await this.checklistRepository.save(checklist);
   }
 
-  async deleteChecklist(seq: number) {
-    await this.checklistRepository.softDelete(seq);
+  async deleteChecklist(seq: number, isDeleted: boolean) {
+    if (isDeleted) {
+      await this.checklistRepository.softDelete(seq);
+    } else {
+      await this.checklistRepository.restore(seq);
+    }
     return true;
   }
 
-  async restoreDeleteChecklist(seq: number) {
-    await this.checklistRepository.restore(seq);
-    return true;
-  }
-
-  async completeChecklist(seq: number) {
+  async updateCompleteChecklist(seq: number, isCompleted: boolean) {
     const checklist = await this.checklistRepository.findOneBy({
       seq: seq,
     });
-    checklist.complete();
-  }
+    checklist.updateComplete(isCompleted);
 
-  async cancelCompleteChecklist(seq: number) {
-    const checklist = await this.checklistRepository.findOneBy({
-      seq: seq,
-    });
-    checklist.cancelComplete();
+    return await this.checklistRepository.save(checklist);
   }
 }
