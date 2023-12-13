@@ -1,73 +1,149 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# 임신 주차에 따른 체크리스트
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
-
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Installation
-
-```bash
-$ yarn install
+## 1. 폴더/파일 구조
 ```
 
-## Running the app
+```
+내용 추가
 
-```bash
-# development
-$ yarn run start
+## 2. query/mutation
 
-# watch mode
-$ yarn run start:dev
+### 2.1 헤더 설정
+```
+{
+  "userSeq":1
+}
+```
+### 2.2 사용자
+```
+# 사용자 조회
+query {
+  findUser(seq:1) {
+    seq
+    nickname
+    dueDate
+    pregnancyWeek
+  }
+}
 
-# production mode
-$ yarn run start:prod
+# 사용자 정보 변경
+mutation {
+  updateUser(updateUser: {
+    seq: 1,
+    nickname: "test",
+    dueDate: "2024-09-18" // YYYY-MM-DD 포맷만 지원
+  })
+}
 ```
 
-## Test
+### 2.3 체크리스트
+```
+# 아이템 추가
+mutation {
+  addChecklist(createChecklist: { userSeq: 1, weekNumber: 1, content: "test" })
+}
 
-```bash
-# unit tests
-$ yarn run test
+# 아이템 내용 수정
+mutation {
+  updateChecklist(updateChecklist: { seq: 2, content: "test12" }) {
+    weekNumber
+    content
+    isCompleted
+    createdAt
+  }
+}
 
-# e2e tests
-$ yarn run test:e2e
+# 주차별 체크리스트 조회
+query {
+  getChecklist(
+    userId: 1
+    week: 1
+    pagination: { limit: 10, offset: 0, orderBy: "createdAt" }
+  ) {
+    seq
+    weekNumber
+    content
+    isCompleted
+    createdAt
+  }
+}
 
-# test coverage
-$ yarn run test:cov
+# 완료 체크/해제 처리
+mutation {
+  updateCompleteChecklist(seq: 2, isCompleted: true) {
+    weekNumber
+    content
+    isCompleted
+    createdAt
+  }
+}
+
+# 삭제 / 삭제 취소 처리
+mutation {
+  updateDeleteChecklist(seq:2, isDeleted:false)
+}
 ```
 
-## Support
+## 3. 프론트 개발 시 고려사항
+- 완료/완료 해제 - 조회 된 `isCompleted` 값으로 상태관리 및 체크 표시, onClick 이벤트로 `updateCompleteChecklist mutation` 호출
+- 삭제/삭제 취소 - 조회 된 `isDeleted` 값으로 상태관리 및 삭제 표시, onClick 이벤트로 `updateDeleteChecklist mutation` 호출
+- 사용자 정보 변경 - `updateUser mutation` 호출 시 `dueDate: "YYYY-MM-DD"` 포맷만 지원 이외 에러 발생
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## 4. 문제와 해결과정
+### 4.1 graphql mutation 호출 시 date 포맷
+- 문제 : `dueDate: "YYYY-MM-DD"` 포맷만 지원하지만 타입을 string으로 지정해 프론트엔드 개발 시 포맷 예측 불가능
+- 해결 과정 : 
+@InputType 정의할 때 스프링의 `@Pattern` 정규식 기반으로 유효성 검사하는 어노테이션처럼 사용하면 좋겠다 생각해서
+`@ValidateDateFormat` 데코레이터를 추가했고 날짜 포맷을 아래 예시와 같이 다른 곳에서 사용할 수 있도록 함
+``` typescript
+// validate-date-format.decorator.ts
+@ValidatorConstraint({ async: false })
+export class ValidateDateFormatDecorator
+  implements ValidatorConstraintInterface
+{
+  validate(value: any, args: ValidationArguments) {
+    const [format] = args.constraints;
+    const regex = new RegExp(format.replace(/[YMD]/g, '\\d'));
+    return typeof value === 'string' && regex.test(value);
+  }
 
-## Stay in touch
+  defaultMessage(args: ValidationArguments) {
+    const [format] = args.constraints;
+    return `Date must be in the format ${format}`;
+  }
+}
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+export const ValidateDateFormat = (
+  format: string,
+  validationOptions?: ValidationOptions,
+) => {
+  return (object: object, propertyName: string) => {
+    registerDecorator({
+      target: object.constructor,
+      propertyName: propertyName,
+      options: validationOptions,
+      constraints: [format],
+      validator: ValidateDateFormatDecorator,
+    });
+  };
+};
+```
+- 사용 예시
+``` typescript
+// update-user.input.ts
+@InputType()
+export class UpdateUserInput {
+  @Field()
+  seq: number;
 
-## License
+  @Field()
+  nickname: string;
 
-Nest is [MIT licensed](LICENSE).
+  @Field()
+  @ValidateDateFormat('YYYY-MM-DD', {
+    message: 'dueDate must be in the format YYYY-MM-DD',
+  })
+  dueDate: string;
+}
+```
