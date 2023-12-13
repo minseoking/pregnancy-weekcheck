@@ -42,6 +42,11 @@ export class ChecklistResolver {
     return await this.checklistService.deleteChecklist(seq);
   }
 
+  @Mutation(() => Boolean)
+  async restoreDeleteChecklist(@Args('seq') seq: number) {
+    return await this.checklistService.restoreDeleteChecklist(seq);
+  }
+
   @Mutation(() => ChecklistDto)
   async completeChecklist(@Args('seq') seq: number) {
     return await this.checklistService.completeChecklist(seq);

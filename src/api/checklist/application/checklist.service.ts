@@ -61,7 +61,12 @@ export class ChecklistService {
   }
 
   async deleteChecklist(seq: number) {
-    await this.checklistRepository.softDelete({ seq: seq });
+    await this.checklistRepository.softDelete(seq);
+    return true;
+  }
+
+  async restoreDeleteChecklist(seq: number) {
+    await this.checklistRepository.restore(seq);
     return true;
   }
 
