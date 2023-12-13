@@ -6,10 +6,10 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { UserEntity } from './user.entity';
+import { UserEntity } from '../../user/domain/user.entity';
 
 @Entity('checklist')
-export class ChecklistEntity {
+export class ChecklistitemEntity {
   @PrimaryGeneratedColumn()
   seq: number; // 고유번호
 
@@ -32,7 +32,7 @@ export class ChecklistEntity {
   deletedAt!: Date | null;
 
   static create(user: UserEntity, weekNumber: number, content: string) {
-    const checklist = new ChecklistEntity();
+    const checklist = new ChecklistitemEntity();
     checklist.user = user;
     checklist.weekNumber = weekNumber;
     checklist.content = content;
@@ -43,6 +43,7 @@ export class ChecklistEntity {
   complete() {
     this.isCompleted = true;
   }
+
   cancelComplete() {
     this.isCompleted = false;
   }

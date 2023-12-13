@@ -1,11 +1,12 @@
 import { Module, ValidationPipe } from '@nestjs/common';
-import { UserModule } from './user/user.module';
+import { UserModule } from './api/user/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmConfig } from './global/config/typeorm.config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { graphqlConfig } from './global/config/graphql.config';
 import { APP_PIPE } from '@nestjs/core';
+import { ChecklistModule } from './api/checklist/checklist.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { APP_PIPE } from '@nestjs/core';
     GraphQLModule.forRootAsync(graphqlConfig),
     TypeOrmModule.forRootAsync(typeOrmConfig),
     UserModule,
+    ChecklistModule,
   ],
   providers: [
     {

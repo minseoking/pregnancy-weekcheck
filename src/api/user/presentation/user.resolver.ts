@@ -3,7 +3,7 @@ import { UserService } from '../application/user.service';
 import { UserDto } from './dto/user.dto';
 import { UpdateUserInput } from './dto/update-user.input';
 import { UseGuards } from '@nestjs/common';
-import { AuthGuard } from '../../global/guards/auth.guard';
+import { AuthGuard } from '../../../global/guards/auth.guard';
 
 @Resolver('User')
 @UseGuards(AuthGuard)

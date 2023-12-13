@@ -1,21 +1,19 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { ChecklistEntity } from '../domain/checklist.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { PaginationDto } from '../../global/dto/pagination.dto';
-import { ChecklistRepository } from '../infrastructure/checklist.repository';
+import { PaginationDto } from '../../../global/dto/pagination.dto';
+import { ChecklistitemEntity } from '../domain/checklistitem.entity';
 import { ChecklistDto } from '../presentation/dto/checklist.dto';
 import { CreateChecklistInput } from '../presentation/dto/create-checklist.input';
-import { UserEntity } from '../domain/user.entity';
-import { Repository } from 'typeorm';
 import { UpdateChecklistInput } from '../presentation/dto/update-checklist.input';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ChecklistRepository } from '../infrastructure/checklist.repository';
+import { UserService } from '../../user/application/user.service';
 
 @Injectable()
 export class ChecklistService {
   constructor(
     @InjectRepository(ChecklistRepository)
     private readonly checklistRepository: ChecklistRepository,
-    @InjectRepository(UserEntity)
-    private readonly userRepository: Repository<UserEntity>,
+    private readonly userService: UserService,
   ) {}
 
   async getChecklistForWeek(
@@ -31,7 +29,7 @@ export class ChecklistService {
     return checklist.map((checklist) => this.ToChecklistDto(checklist));
   }
 
-  private ToChecklistDto(checklist: ChecklistEntity): ChecklistDto {
+  private ToChecklistDto(checklist: ChecklistitemEntity): ChecklistDto {
     return {
       seq: checklist.seq,
       isCompleted: checklist.isCompleted,
@@ -42,14 +40,9 @@ export class ChecklistService {
   }
 
   async createChecklist(createChecklist: CreateChecklistInput) {
-    const user = await this.userRepository.findOneBy({
-      seq: createChecklist.userSeq,
-    });
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
+    const user = await this.userService.getUserBySeq(createChecklist.userSeq);
 
-    const checklist = ChecklistEntity.create(
+    const checklist = ChecklistitemEntity.create(
       user,
       createChecklist.weekNumber,
       createChecklist.content,

@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { UserEntity } from '../domain/user.entity';
 import { UserDto } from '../presentation/dto/user.dto';
 import { UpdateUserInput } from '../presentation/dto/update-user.input';
-import { calculatePregnancyWeek } from '../../global/util/date.util';
+import { calculatePregnancyWeek } from '../../../global/util/date.util';
 
 @Injectable()
 export class UserService {

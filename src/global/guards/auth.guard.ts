@@ -1,5 +1,5 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { UserService } from '../../user/application/user.service';
+import { UserService } from '../../api/user/application/user.service';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
 @Injectable()
