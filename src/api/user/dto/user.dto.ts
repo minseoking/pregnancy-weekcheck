@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
+import { UserEntity } from '../domain/user.entity';
 
 @ObjectType()
 export class UserDto {
@@ -13,4 +14,8 @@ export class UserDto {
 
   @Field()
   pregnancyWeek: number;
+
+  toEntity() {
+    return UserEntity.from(this.seq, this.nickname, this.dueDate);
+  }
 }

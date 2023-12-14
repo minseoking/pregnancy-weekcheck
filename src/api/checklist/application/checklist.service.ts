@@ -51,23 +51,24 @@ export class ChecklistService {
     const checklistSeeds = (await this.checklistSeedRepository.find()).map(
       (checklist) => {
         return ChecklistEntity.create(
-          user,
+          user.toEntity(),
           checklist.weekNumber,
           checklist.content,
         );
       },
     );
+
     await this.checklistRepository.insert(checklistSeeds);
   }
 
   async createChecklist(createChecklist: CreateChecklistInput) {
     const user = await this.userService.getUserBySeq(createChecklist.userSeq);
-
     const checklist = ChecklistEntity.create(
-      user,
+      user.toEntity(),
       createChecklist.weekNumber,
       createChecklist.content,
     );
+
     await this.checklistRepository.save(checklist);
     return 'success';
   }

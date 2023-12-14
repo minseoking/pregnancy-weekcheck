@@ -12,6 +12,14 @@ export class UserEntity {
   @Column()
   dueDate: string; // 출산 예정일 (YYYY-MM-DD 형식)
 
+  static from(seq: number, nickname: string, dueDate: string) {
+    const user = new UserEntity();
+    user.seq = seq;
+    user.nickname = nickname;
+    user.dueDate = dueDate;
+    return user;
+  }
+
   update(nickname: string, dueDate: string) {
     if (nickname) this.nickname = nickname;
     if (dueDate) this.dueDate = dueDate;
