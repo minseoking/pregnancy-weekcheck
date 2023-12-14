@@ -2,6 +2,22 @@
 
 
 ## 1. 폴더/파일 구조
+전체적으로 `api`와 `global`로 나누어져 있습니다.
+### api
+api에선 각 도메인별로 분리 후 계층형 아키텍처로 폴더 구조 설계했습니다.
+- application: 서비스 로직을 포함합니다.
+- domain: 엔티티와 도메인을 포함합니다.
+- infrastructure: 데이터베이스와 같은 인프라 관련 코드를 포함합니다.
+  - 인프라의 분리를 위해 data mapper패턴 사용
+  - typeorm0.3.x 에선 datamapper 패턴을 지양하며 repo패턴을 deprecated 했으며 active record 패턴을 권장함
+- presentation: 컨트롤러 및 리졸버와 같은 클라이언트 인터페이스 로직을 포함합니다.
+### global
+전역적으로 사용되는 모듈과 설정을 포함합니다.
+- config: 전역 설정 파일을 포함합니다 (예: GraphQL 및 TypeORM 설정).
+- decorators: 커스텀 데코레이터를 포함합니다.
+- dto: 전역적으로 사용될 수 있는 DTO를 포함합니다.
+- guards: 인증 및 권한 검사를 위한 가드를 포함합니다.
+- util: date 파싱과 같은 유틸리티 함수를 포함합니다.
 ```
 ├── api/
 │   ├── checklist/
