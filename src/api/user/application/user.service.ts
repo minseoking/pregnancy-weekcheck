@@ -19,12 +19,8 @@ export class UserService {
 
   async updateUser(seq: number, userDto: UpdateUserInput) {
     const user = await this.getUser(seq);
-    if (userDto.nickname) {
-      user.nickname = userDto.nickname;
-    }
-    if (userDto.dueDate) {
-      user.dueDate = userDto.dueDate;
-    }
+    user.update(userDto.nickname, userDto.dueDate);
+
     await this.userRepository.save(user);
     return 'success';
   }
@@ -42,7 +38,7 @@ export class UserService {
     userDto.seq = userEntity.seq;
     userDto.nickname = userEntity.nickname;
     userDto.dueDate = userEntity.dueDate;
-    userDto.pregnancyWeek = calculatePregnancyWeek(userEntity.dueDate);
+    userDto.pregnancyWeek = userEntity.getPregnancyWeek();
 
     return userDto;
   }
