@@ -1,9 +1,9 @@
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ChecklistService } from '../application/checklist.service';
-import { ChecklistDto } from './dto/checklistDto';
+import { ChecklistDto } from '../dto/checklistDto';
 import { PaginationDto } from '../../../global/dto/pagination.dto';
-import { CreateChecklistInput } from './dto/create-checklist.input';
-import { UpdateChecklistInput } from './dto/update-checklist.input';
+import { CreateChecklistInput } from '../dto/create-checklist.input';
+import { UpdateChecklistInput } from '../dto/update-checklist.input';
 
 @Resolver('Checklist')
 // @UseGuards(AuthGuard)

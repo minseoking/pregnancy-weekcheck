@@ -3,9 +3,32 @@
 
 ## 1. 폴더/파일 구조
 ```
+├── api/
+│   ├── checklist/
+│   │   ├── application/
+│   │   ├── domain/
+│   │   ├── infrastructure/
+│   │   └── presentation/
+│   └── user/
+│       ├── application/
+│       ├── domain/
+│       ├── presentation/
+├── global/
+│   ├── config/
+│   │   ├── graphql.config.ts
+│   │   └── typeorm.config.ts
+│   ├── decorators/
+│   │   └── validate-date-format.decorator.ts
+│   ├── dto/
+│   │   └── pagination.dto.ts
+│   ├── guards/
+│   │   └── auth.guard.ts
+│   └── util/
+│       └── date.util.ts
+├── app.module.ts*
+└── main.ts*
 
 ```
-내용 추가
 
 ## 2. query/mutation
 

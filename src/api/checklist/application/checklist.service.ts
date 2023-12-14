@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PaginationDto } from '../../../global/dto/pagination.dto';
 import { ChecklistEntity } from '../domain/checklist.entity';
-import { ChecklistDto } from '../presentation/dto/checklistDto';
-import { CreateChecklistInput } from '../presentation/dto/create-checklist.input';
-import { UpdateChecklistInput } from '../presentation/dto/update-checklist.input';
+import { ChecklistDto } from '../dto/checklistDto';
+import { CreateChecklistInput } from '../dto/create-checklist.input';
+import { UpdateChecklistInput } from '../dto/update-checklist.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ChecklistRepository } from '../infrastructure/checklist.repository';
 import { UserService } from '../../user/application/user.service';

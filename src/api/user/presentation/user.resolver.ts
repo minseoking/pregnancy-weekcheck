@@ -1,7 +1,7 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { UserService } from '../application/user.service';
-import { UserDto } from './dto/user.dto';
-import { UpdateUserInput } from './dto/update-user.input';
+import { UserDto } from '../dto/user.dto';
+import { UpdateUserInput } from '../dto/update-user.input';
 import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from '../../../global/guards/auth.guard';
 

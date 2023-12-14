@@ -2,8 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from '../domain/user.entity';
-import { UserDto } from '../presentation/dto/user.dto';
-import { UpdateUserInput } from '../presentation/dto/update-user.input';
+import { UserDto } from '../dto/user.dto';
+import { UpdateUserInput } from '../dto/update-user.input';
 import { calculatePregnancyWeek } from '../../../global/util/date.util';
 
 @Injectable()

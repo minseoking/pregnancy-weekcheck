@@ -1,5 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { ValidateDateFormat } from '../../../../global/decorators/validate-date-format.decorator';
+import { ValidateDateFormat } from '../../../global/decorators/validate-date-format.decorator';
 
 @InputType()
 export class UpdateUserInput {
